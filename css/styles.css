@@ -1,0 +1,259 @@
+@import url("https://fonts.googleapis.com/css2?family=Yeseva+One&display=swap");
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  background: radial-gradient(circle at bottom right, #007cb7, #83b4b6 69%, rgba(230, 236, 235, 0.6862745098) 70%, #00abc5), #00abc5;
+  overflow: hidden;
+  perspective: 1440px;
+  font-family: "Yeseva One";
+}
+
+svg {
+  position: absolute;
+}
+
+.quote {
+  position: relative;
+  width: 90%;
+  max-width: 90vh;
+  aspect-ratio: 1/1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px 20px 50% 50%;
+  overflow: hidden;
+  text-align: center;
+  word-wrap: no-wrap;
+  filter: drop-shadow(-20px 20px 5px #006793);
+}
+.quote figure {
+  margin: auto;
+  font-size: clamp(12vh, 12vh, 6rem);
+  filter: drop-shadow(0 0 5px #006793);
+}
+.quote figure blockquote span.wave {
+  background: -50% 0%/200% 100% linear-gradient(90deg, rgba(255, 255, 255, 0.0588235294), #006793, rgba(255, 255, 255, 0.0588235294));
+  background-position: -50% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: flow 5s linear infinite, sheen 10s linear infinite;
+}
+.quote figure blockquote span.wave.oppo {
+  animation-direction: reverse;
+}
+.quote figure blockquote figcaption {
+  font-size: clamp(8vh, 8vh, 4rem);
+  text-align: right;
+}
+.quote .frame {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+}
+.quote .frame:nth-of-type(1) {
+  height: 33.3%;
+  opacity: 0.6;
+}
+.quote .frame:nth-of-type(2) {
+  height: 66.6%;
+  opacity: 0.4;
+}
+.quote .frame:nth-of-type(3) {
+  height: 99.9%;
+  opacity: 0.2;
+}
+
+.pond {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 0, 0.0588235294);
+}
+.pond .film {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(8px);
+  background-size: cover;
+  filter: url(#displacementFilter) url(#goo);
+}
+.pond .ripple {
+  position: absolute;
+  width: 50vw;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  transform-origin: center;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  animation: ripple 5s ease-in-out infinite;
+}
+.pond .ripple:nth-of-type(1) {
+  width: 28vw;
+  top: 40vh;
+  left: 23vw;
+  border-width: 4px;
+  animation-duration: 8s;
+  animation-delay: 2.0839134134s;
+}
+.pond .ripple:nth-of-type(2) {
+  width: 26vw;
+  top: 76vh;
+  left: 33vw;
+  border-width: 3px;
+  animation-duration: 7s;
+  animation-delay: 1.8541784178s;
+}
+.pond .ripple:nth-of-type(3) {
+  width: 38vw;
+  top: 69vh;
+  left: 2vw;
+  border-width: 4px;
+  animation-duration: 10s;
+  animation-delay: 1.1521527206s;
+}
+.pond .ripple:nth-of-type(4) {
+  width: 36vw;
+  top: 49vh;
+  left: 4vw;
+  border-width: 5px;
+  animation-duration: 6s;
+  animation-delay: 2.840305215s;
+}
+.pond .ripple:nth-of-type(5) {
+  width: 26vw;
+  top: 12vh;
+  left: 82vw;
+  border-width: 5px;
+  animation-duration: 9s;
+  animation-delay: 2.2517894648s;
+}
+.pond .ripple:nth-of-type(6) {
+  width: 46vw;
+  top: 53vh;
+  left: 39vw;
+  border-width: 3px;
+  animation-duration: 7s;
+  animation-delay: 1.2093683486s;
+}
+.pond .ripple:nth-of-type(7) {
+  width: 36vw;
+  top: 8vh;
+  left: 18vw;
+  border-width: 5px;
+  animation-duration: 10s;
+  animation-delay: 1.2153089728s;
+}
+.pond .ripple:nth-of-type(8) {
+  width: 37vw;
+  top: 4vh;
+  left: 81vw;
+  border-width: 5px;
+  animation-duration: 8s;
+  animation-delay: 1.8149664037s;
+}
+.pond .fish {
+  position: absolute;
+  width: 38px;
+  aspect-ratio: 0.3/1;
+  display: flex;
+  flex-direction: column;
+  filter: url(#goo);
+  animation: voyage 20s linear infinite;
+  transform: rotate(38deg);
+}
+.pond .fish .part {
+  width: 100%;
+  flex-grow: 2;
+  background: #006793;
+}
+.pond .fish .part.head {
+  transform-origin: bottom center;
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  animation: swim 1.3s linear infinite;
+}
+.pond .fish .part.tail {
+  transform-origin: top center;
+  flex-grow: 4;
+  clip-path: polygon(50% 100%, 100% 0%, 0% 0%);
+  animation: swim 1.3s linear infinite reverse;
+}
+.pond .fish:nth-of-type(1) {
+  top: 110vh;
+  left: 30vw;
+  animation-delay: 0.4953886642s;
+  animation-duration: 14s;
+}
+.pond .fish:nth-of-type(2) {
+  top: 50vh;
+  left: -5vw;
+  animation-delay: 1.330537889s;
+  animation-duration: 18s;
+}
+.pond .fish:nth-of-type(3) {
+  top: 110vh;
+  left: 70vw;
+  animation-delay: 2.4179860289s;
+  animation-duration: 12s;
+}
+
+.wave {
+  -webkit-mask: radial-gradient(46.6154480832px at 50% calc(100% - (27px + 38px)), blue 99%, rgba(0, 0, 0, 0) 101%), radial-gradient(46.6154480832px at 50% calc(100% + 38px), rgba(0, 0, 0, 0) 99%, red 101%) repeat-x;
+  -webkit-mask-size: calc(4 * 27px) 100%;
+  -webkit-mask-position: calc(50% - 2 * 27px) 0, 50% calc(100% - 27px);
+  animation: flow 5s linear infinite;
+}
+.wave.oppo {
+  animation-direction: reverse;
+}
+
+@keyframes flow {
+  100% {
+    -webkit-mask-position: calc(50% - 6 * 27px) 0, calc(50% - 4 * 27px) calc(200% - 27px);
+  }
+}
+@keyframes swim {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  33.3% {
+    transform: rotate(15deg);
+  }
+  75% {
+    transform: rotate(-15deg);
+  }
+}
+@keyframes voyage {
+  100% {
+    translate: 40vw -130vh;
+  }
+}
+@keyframes sheen {
+  100% {
+    background-position: 150% 0%;
+  }
+}
+@keyframes ripple {
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@media (max-width: 700px) {
+  .quote figure, .quote figure figcaption {
+    font-size: clamp(30px, 10vw, 4rem);
+  }
+}
+
+/*# sourceMappingURL=styles.css.map */

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catch the Enemies</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sass.js/0.10.7/sass.min.js">
+    <link rel="stylesheet" href="css/styles.css"> 
+    <style>
+        /* Appliquer un reset de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Centrer le body */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('ocean.jpg'); /* Ajouter l'image de fond d'océan */
+            background-size: cover; /* Ajuster l'image à la taille de l'écran */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            flex-direction: column;
+            position: relative; /* Pour positionner le message et bouton au centre */
+        }
+
+        /* Style du titre */
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        /* Style du score */
+        #score {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Style du canvas */
+        #gameCanvas {
+            border: 2px solid black;
+            display: block;
+            position: relative;
+        }
+
+        /* Style du bouton Game Over dans le cadre */
+        #gameOverButton {
+            display: none; /* Cacher par défaut */
+            position: absolute; /* Positionner dans le cadre */
+            top: 50%; /* Centrer verticalement */
+            left: 50%; /* Centrer horizontalement */
+            transform: translate(-50%, -50%); /* Ajuster pour que le centre du bouton soit aligné */
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #f44336; /* Couleur rouge */
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #gameOverButton:hover {
+            background-color: #d32f2f; /* Couleur rouge plus foncé lors du survol */
+        }
+
+        /* Style du message Game Over */
+        #gameOverMessage {
+            font-size: 32px;
+            color: white;
+            margin-top: 20px;
+            display: none; /* Cacher par défaut */
+            position: absolute; /* Centrer le message */
+            top: 50%; /* Centrer verticalement */
+            left: 50%; /* Centrer horizontalement */
+            transform: translate(-50%, -50%); /* Ajuster pour que le centre du message soit aligné */
+        }
+
+        #buttonResetGame {
+            font-size: 24px; /* Réduit la taille du texte pour le bouton */
+            color: white;
+            margin-top: 20px;
+            display: none; /* Cacher par défaut */
+            position: absolute; /* Centrer le bouton */
+            top: 60%; /* Placer le bouton sous le message Game Over */
+            left: 50%; /* Centrer horizontalement */
+            transform: translate(-50%, -50%); /* Ajuster pour que le centre du bouton soit aligné sous le message */
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f44336;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #buttonResetGame:hover {
+            background-color: #d32f2f; /* Changer la couleur du bouton au survol */
+        }
+
+    </style>
+</head>
+
+<body>
+    <h1>Catch the Enemies</h1>
+    <p id="score">Score: 0</p>
+    <canvas id="gameCanvas" width="800" height="600">
+        <!-- Bouton Game Over est ici, il est caché par défaut -->
+        <button id="gameOverButton">Restart Game</button>
+    </canvas>
+    <p id="gameOverMessage">Game Over!</p> <!-- Message Game Over centré -->
+
+    <button id="buttonResetGame"> Reset Game</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const gameOverButton = document.getElementById('gameOverButton');
+            const gameOverMessage = document.getElementById('gameOverMessage');
+            const buttonResetGame = document.getElementById('buttonResetGame');
+
+            let playerX;
+            const playerWidth = 80;
+            const playerHeight = 20;
+            let enemies = [];
+            let enemyTimer = 0;
+            let score = 0;
+            let gameOver = false;
+
+            // Fonction de réinitialisation du jeu
+            function resetGame() {
+                playerX = canvas.width / 2 - 40;
+                enemies = [];
+                enemyTimer = 0;
+                score = 0;
+                gameOver = false;
+                updateScore();
+                gameOverButton.style.display = 'none'; // Cacher le bouton Game Over
+                gameOverMessage.style.display = 'none'; // Cacher le message Game Over
+                buttonResetGame.style.display = 'none'; // Cacher le bouton Reset Game
+
+                gameLoop(); // Relancer la boucle du jeu
+            }
+
+            // Met à jour le score
+            function updateScore() {
+                document.getElementById('score').textContent = `Score: ${score}`;
+            }
+
+            // Charger l'image du joueur
+            const playerImage = new Image();
+            playerImage.src = 'turtle.png'; // Remplacez par le chemin de votre image
+
+            // Dessine le joueur (utilise l'image)
+            function drawPlayer() {
+                ctx.drawImage(playerImage, playerX, canvas.height - 60, 40, 40); // Afficher l'image du joueur
+            }
+
+            // Ajout des images pour les sachets et méduses
+            const sachetImage = new Image();
+            sachetImage.src = 'plast.png'; // Remplacez par le chemin de votre image de sachet
+
+            const meduseImage = new Image();
+            meduseImage.src = 'meduse.png'; // Remplacez par le chemin de votre image de méduse
+
+            // Dessine les ennemis (sachets et méduses)
+            function drawEnemies() {
+                enemies.forEach(enemy => {
+                    if (enemy.type === 'sachet') {
+                        // Dessiner un sachet avec une image
+                        ctx.drawImage(sachetImage, enemy.x, enemy.y, 30, 40); // Ajustez la taille
+                    } else if (enemy.type === 'meduse') {
+                        // Dessiner une méduse avec une image
+                        ctx.drawImage(meduseImage, enemy.x, enemy.y, 30, 30); // Ajustez la taille
+                    }
+                });
+            }
+
+            // Met à jour les ennemis
+            function updateEnemies() {
+                // Déplacement des ennemis vers le bas
+                enemies.forEach(enemy => enemy.y += 3);
+
+                // Vérification des collisions avec le joueur
+                enemies = enemies.filter(enemy => {
+                    const caught = 
+                        enemy.y + 30 >= canvas.height - 40 &&
+                        enemy.x < playerX + playerWidth &&
+                        enemy.x + 30 > playerX;
+
+                    if (caught) {
+                        if (enemy.type === 'sachet') {
+                            // Si le joueur touche une bouteille (sachet), Game Over
+                            gameOver = true;
+                            gameOverButton.style.display = 'block'; // Afficher le bouton Game Over
+                            gameOverMessage.style.display = 'block'; // Afficher le message Game Over
+                            buttonResetGame.style.display = 'block'; // Afficher le bouton Reset Game
+                        } else if (enemy.type === 'meduse') {
+                            // Si le joueur touche une méduse, le score augmente
+                            score++;
+                            updateScore();
+                        }
+                        return false; // Supprime l'ennemi attrapé
+                    }
+
+                    // Supprime les ennemis hors de l'écran
+                    return enemy.y < canvas.height;
+                });
+
+                // Génération d'un nouvel ennemi avec un type aléatoire (sachet ou méduse)
+                if (enemyTimer === 0 && !gameOver) {
+                    const enemyType = Math.random() < 0.5 ? 'sachet' : 'meduse'; // Alterner entre sachet et méduse
+                    enemies.push({
+                        x: Math.random() * (canvas.width - 30),
+                        y: -30,
+                        type: enemyType, // Ajout du type à l'ennemi
+                    });
+                    enemyTimer = 50; // Réinitialisation du timer
+                } else {
+                    enemyTimer--;
+                }
+            }
+
+            // Boucle principale du jeu
+            function gameLoop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawPlayer();
+                drawEnemies();
+                updateEnemies();
+
+                if (!gameOver) {
+                    requestAnimationFrame(gameLoop); // Continue la boucle si le jeu n'est pas terminé
+                }
+            }
+
+            // Déplacement du joueur avec les touches fléchées
+            document.addEventListener('keydown', (e) => {
+                if (gameOver) return; // Bloque les mouvements si le jeu est terminé
+                if (e.key === 'ArrowLeft' && playerX > 0) {
+                    playerX -= 20;
+                }
+                if (e.key === 'ArrowRight' && playerX < canvas.width - playerWidth) {
+                    playerX += 20;
+                }
+            });
+
+            // Réinitialiser le jeu lorsqu'on clique sur le bouton Game Over
+            gameOverButton.addEventListener('click', resetGame);
+
+            // Réinitialiser le jeu lorsqu'on clique sur le bouton Reset
+            buttonResetGame.addEventListener('click', resetGame);
+
+            // Initialise le jeu
+            resetGame();
+        });
+    </script>
+</body>
+</html>
